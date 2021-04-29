@@ -10,7 +10,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserService  implements UserDetailsService {
+public class UserService implements UserDetailsService {
+
   private UserRepository userRepository;
 
   @Autowired
@@ -18,9 +19,13 @@ public class UserService  implements UserDetailsService {
     this.userRepository = userRepository;
   }
 
+  /**
+   * Spring Security 버전이 상승에 따른 PasswordEncoder 에러 방지 {noop} + password
+   */
   @Override
-  public UserDetails loadUserByUsername(String userName){
+  public UserDetails loadUserByUsername(String userName) {
     User user = userRepository.findByUserName(userName);
-    return new org.springframework.security.core.userdetails.User(user.getUserName(), user.getPassword(), new ArrayList<>());
+    return new org.springframework.security.core.userdetails.User(user.getUserName(),
+        "{noop}" + user.getPassword(), new ArrayList<>());
   }
 }

@@ -1,10 +1,39 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Title</title>
+  <script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
+  <script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+  <script>
+    function test(){
+
+      var param = $("form[name=form1]").serialize();
+
+      $.ajax({
+        type: "POST"
+        ,contentType: "application/json"
+        ,url: "/authenticate"
+        ,data: JSON.stringify({
+          userName: "user1",
+          password: "pwd1"
+        })
+        ,success:function(data){
+          alert("data");
+          alert("성공");
+        }
+        ,error:function(data){
+          alert("error");
+        }
+      });
+    }
+  </script>
 </head>
 <body>
-<form></form>
+<form name="form1">
+  <input type="text" name="userName"/>
+  <input type="text" name="password">
+</form>
+<input type="button" id="btn" value="붜튼" text="버튼" onclick="test()"/>
 </body>
 </html>
+

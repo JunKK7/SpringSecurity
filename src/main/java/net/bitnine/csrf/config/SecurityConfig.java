@@ -1,6 +1,6 @@
 package net.bitnine.csrf.config;
 
-import net.bitnine.jwtsample.jwt.JwtFilters;
+import net.bitnine.jwtsample.util.jwt.JwtFilters;
 import net.bitnine.jwtsample.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -36,12 +36,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     return super.authenticationManagerBean();
   }
 
+  /**
+   * authorizeRequests() -> 시큐리티 처리에 HttpServletRequest 사용 antMatchers() -> 특정한 경로 지정 참고
+   * https://velog.io/@jayjay28/2019-09-04-1109-%EC%9E%91%EC%84%B1%EB%90%A8 sessionManagement()
+   * .sessionCreationPolicy(SessionCreationPolicy.STATELESS) -> 세션을 생성하지도 않고 기존것을 사용하지 않음( JWT 사용 )
+   *
+   * @param http http param
+   * @throws Exception
+   */
   @Override
   protected void configure(HttpSecurity http) throws Exception {
-    http.csrf().disable().authorizeRequests().antMatchers("/authenticate")
-        .permitAll().anyRequest().authenticated()
+    http.csrf().disable()
+        .authorizeRequests().antMatchers("/authenticate").permitAll()
+        .antMatchers("/login").permitAll()
+        .anyRequest().authenticated()
         .and().exceptionHandling().and().sessionManagement()
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-    http.addFilterBefore(jwtFilters, UsernamePasswordAuthenticationFilter.class);;
+    http.addFilterBefore(jwtFilters, UsernamePasswordAuthenticationFilter.class);
   }
 }
