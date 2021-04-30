@@ -31,7 +31,8 @@ public class CookieUtil {
       default:
         break;
     }
-    token.setMaxAge((int)(jwtUtil.getACCESS_TOKEN_SECOND() / 1000));
+    //token.setMaxAge((int)(jwtUtil.getACCESS_TOKEN_SECOND() / 1000));
+    token.setMaxAge(-1);
     token.setPath("/");
     return token;
   }

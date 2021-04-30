@@ -12,8 +12,14 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class JwtSampleApplication {
-  @Autowired
+
   private UserRepository repository;
+
+  @Autowired
+  public JwtSampleApplication(UserRepository repository) {
+    this.repository = repository;
+  }
+
   @PostConstruct
   public void initUsers() {
     List<User> users = Stream.of(

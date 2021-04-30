@@ -4,12 +4,10 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import net.bitnine.jwtsample.domain.AuthRequest;
+import net.bitnine.jwtsample.util.redis.RedisUtil;
 import net.bitnine.jwtsample.util.cookie.CookieUtil;
 import net.bitnine.jwtsample.util.jwt.JwtUtil;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.SetOperations;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,16 +22,16 @@ public class JwtController {
   private AuthenticationManager authenticationManager;
   private JwtUtil jwtUtil;
   private CookieUtil cookieUtil;
-  private StringRedisTemplate redisTemplate;
+  private RedisUtil redisUtil;
 
   @Autowired
   public JwtController(
       AuthenticationManager authenticationManager, JwtUtil jwtUtil,
-      CookieUtil cookieUtil, StringRedisTemplate redisTemplate) {
+      CookieUtil cookieUtil, RedisUtil redisUtil) {
     this.authenticationManager = authenticationManager;
     this.jwtUtil = jwtUtil;
     this.cookieUtil = cookieUtil;
-    this.redisTemplate = redisTemplate;
+    this.redisUtil = redisUtil;
   }
 
   @GetMapping("/a")
@@ -58,6 +56,7 @@ public class JwtController {
     String accessToken = jwtUtil.generateToken(authRequest.getUserName(), jwtUtil.getACCESS_TOKEN());
     String refreshToken = jwtUtil.generateToken(authRequest.getUserName(), jwtUtil.getREFRESH_TOKEN());
 
+
     // SPLIT TOKEN
     String[] jwtToken = accessToken.split("\\.");
 
@@ -66,15 +65,13 @@ public class JwtController {
     Cookie signature = cookieUtil.createCookie("Signature", jwtToken[2]);
 
     // SAVE TOKEN
-    saveRefreshToken(authRequest.getUserName(), refreshToken);
+    redisUtil.saveRefreshToken(authRequest.getUserName(), refreshToken);
+
+    // SENDING TOKEN TO COOKIE
     response.addCookie(hp);
     response.addCookie(signature);
 
     return "/a";
-  }
-  public void saveRefreshToken(String userName,String token){
-    SetOperations<String, String> redisSetOp =  redisTemplate.opsForSet();
-    redisSetOp.add(userName,token);
   }
 
 }

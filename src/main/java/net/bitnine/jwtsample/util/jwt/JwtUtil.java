@@ -1,28 +1,38 @@
 package net.bitnine.jwtsample.util.jwt;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import java.util.Arrays;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 import lombok.Getter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.json.GsonJsonParser;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
 @Getter
 public class JwtUtil {
-
-  private final long ACCESS_TOKEN_SECOND = 1000L * 60 * 10;
+  private final long ACCESS_TOKEN_SECOND = 1000L * 60 * 1;
   private final long REFRESH_TOKEN_SECOND = 1000L * 60 * 60 * 24 * 10;
   private final int ACCESS_TOKEN = 0;
   private final int REFRESH_TOKEN = 1;
   private String secret = "BitnineDEV";
 
   public String extractUsername(String token) {
-    return extractClaim(token, Claims::getSubject);
+    //return extractClaim(token, Claims::getSubject);
+    String payLoad = new String(Base64.getDecoder().decode(token.split("\\.")[1].getBytes()));
+    Gson gson = new Gson();
+    Map<String,Object> map = new HashMap<String,Object>();
+    map = (Map<String,Object>) gson.fromJson(payLoad,map.getClass());
+    return map.get("sub").toString();
   }
 
   /**
@@ -41,6 +51,7 @@ public class JwtUtil {
   }
 
   private Claims extractAllClaims(String token) {
+    Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
     return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
   }
 

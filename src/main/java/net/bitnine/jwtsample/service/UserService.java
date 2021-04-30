@@ -21,6 +21,7 @@ public class UserService implements UserDetailsService {
 
   /**
    * Spring Security 버전이 상승에 따른 PasswordEncoder 에러 방지 {noop} + password
+   * ID / PASSWORD Check
    */
   @Override
   public UserDetails loadUserByUsername(String userName) {
