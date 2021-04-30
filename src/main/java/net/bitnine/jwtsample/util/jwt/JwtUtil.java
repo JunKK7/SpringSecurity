@@ -20,9 +20,11 @@ import org.springframework.stereotype.Service;
 @Service
 @Getter
 public class JwtUtil {
-  private final long ACCESS_TOKEN_SECOND = 1000L * 60 * 1;
+  //10분
+  private final long ACCESS_TOKEN_SECOND = 1000L * 60 * 10;
   //private final long REFRESH_TOKEN_SECOND = 1000L * 60 * 60 * 24 * 10;
-  private final long REFRESH_TOKEN_SECOND = 1000L * 60 * 2;
+  //30일
+  private final long REFRESH_TOKEN_SECOND = 1000L * 60 * 24 * 30;
   private final int ACCESS_TOKEN = 0;
   private final int REFRESH_TOKEN = 1;
   private String secret = "BitnineDEV";

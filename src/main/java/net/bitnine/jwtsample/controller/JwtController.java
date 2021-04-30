@@ -10,6 +10,7 @@ import net.bitnine.jwtsample.util.jwt.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,10 +20,10 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class JwtController {
 
-  private AuthenticationManager authenticationManager;
-  private JwtUtil jwtUtil;
-  private CookieUtil cookieUtil;
-  private RedisUtil redisUtil;
+  private final AuthenticationManager authenticationManager;
+  private final JwtUtil jwtUtil;
+  private final CookieUtil cookieUtil;
+  private final RedisUtil redisUtil;
 
   @Autowired
   public JwtController(
@@ -54,7 +55,9 @@ public class JwtController {
 
     // CREATE TOKEN
     String accessToken = jwtUtil.generateToken(authRequest.getUserName(), jwtUtil.getACCESS_TOKEN());
+    log.info("CREATE ACCESS TOKEN");
     String refreshToken = jwtUtil.generateToken(authRequest.getUserName(), jwtUtil.getREFRESH_TOKEN());
+    log.info("CREATE REFRESH TOKEN");
 
 
     // SPLIT TOKEN
