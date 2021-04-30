@@ -66,6 +66,7 @@ public class JwtController {
 
     // SAVE TOKEN
     redisUtil.saveRefreshToken(authRequest.getUserName(), refreshToken);
+    redisUtil.setDataExpired(authRequest.getUserName(), jwtUtil.getREFRESH_TOKEN_SECOND());
 
     // SENDING TOKEN TO COOKIE
     response.addCookie(hp);
