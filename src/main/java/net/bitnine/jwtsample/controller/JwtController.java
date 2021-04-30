@@ -43,24 +43,14 @@ public class JwtController {
         new UsernamePasswordAuthenticationToken(authRequest.getUserName(),
             authRequest.getPassword())
     );
-   /* authenticationManager.authenticate(
-        new UsernamePasswordAuthenticationToken("user1",
-            "pwd1")
-    );*/
     String token = jwtUtil.generateToken(authRequest.getUserName());
     String[] jwtToken = token.split("\\.");
     Cookie hp = cookieUtil.createCookie("Header_Payload",jwtToken[0]+"."+jwtToken[1]+".");
     Cookie signature = cookieUtil.createCookie("Signature", jwtToken[2]);
     response.addCookie(hp);
     response.addCookie(signature);
-    /*try {
-      authenticationManager.authenticate(
-          new UsernamePasswordAuthenticationToken(authRequest.getUserName(), authRequest.getPassword())
-      );
-    } catch (Exception ex) {
-      log.info(ex.toString());
-      //throw new Exception("inavalid username/password");
-    }*/
-    return token;
+    return "/a";
   }
+
+
 }

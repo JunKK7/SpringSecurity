@@ -5,10 +5,19 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import net.bitnine.jwtsample.util.jwt.JwtUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class CookieUtil {
+
+  private JwtUtil jwtUtil;
+
+  @Autowired
+  public CookieUtil(JwtUtil jwtUtil) {
+    this.jwtUtil = jwtUtil;
+  }
 
   public Cookie createCookie(String cookieName, String value){
     Cookie token = new Cookie(cookieName, value);
@@ -22,6 +31,7 @@ public class CookieUtil {
       default:
         break;
     }
+    token.setMaxAge((int)(jwtUtil.getACCESS_TOKEN_SECOND() / 1000));
     token.setPath("/");
     return token;
   }

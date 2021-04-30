@@ -7,12 +7,17 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+import lombok.Getter;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
+@Getter
 public class JwtUtil {
-  private String secret = "javatechie";
+
+  private final long ACCESS_TOKEN_SECOND = 1000L * 60 * 10;
+  private final long REFRESH_TOKEN_SECOND = 1000L * 60 * 60 * 24 * 10;
+  private String secret = "BitnineDEV";
 
   public String extractUsername(String token) {
     return extractClaim(token, Claims::getSubject);
@@ -20,6 +25,7 @@ public class JwtUtil {
 
   /**
    * 만료 로직
+   *
    * @param token
    * @return
    */
@@ -47,10 +53,12 @@ public class JwtUtil {
   }
 
   private String createToken(Map<String, Object> claims, String subject) {
-    return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
-        .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
+    return Jwts.builder().setClaims(claims).setSubject(subject)
+        .setIssuedAt(new Date(System.currentTimeMillis()))
+        .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_SECOND))
         .signWith(SignatureAlgorithm.HS256, secret).compact();
   }
+
   public Boolean validateToken(String token, UserDetails userDetails) {
     final String username = extractUsername(token);
     return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
