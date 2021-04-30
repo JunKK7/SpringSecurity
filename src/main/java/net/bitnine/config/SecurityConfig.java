@@ -1,4 +1,4 @@
-package net.bitnine.csrf.config;
+package net.bitnine.config;
 
 import net.bitnine.jwtsample.util.jwt.JwtFilters;
 import net.bitnine.jwtsample.service.UserService;

@@ -17,6 +17,8 @@ public class JwtUtil {
 
   private final long ACCESS_TOKEN_SECOND = 1000L * 60 * 10;
   private final long REFRESH_TOKEN_SECOND = 1000L * 60 * 60 * 24 * 10;
+  private final int ACCESS_TOKEN = 0;
+  private final int REFRESH_TOKEN = 1;
   private String secret = "BitnineDEV";
 
   public String extractUsername(String token) {
@@ -47,16 +49,27 @@ public class JwtUtil {
   }
 
 
-  public String generateToken(String username) {
+  public String generateToken(String username, int tokenType) {
     Map<String, Object> claims = new HashMap<>();
-    return createToken(claims, username);
+    return createToken(claims, username, tokenType);
   }
 
-  private String createToken(Map<String, Object> claims, String subject) {
-    return Jwts.builder().setClaims(claims).setSubject(subject)
-        .setIssuedAt(new Date(System.currentTimeMillis()))
-        .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_SECOND))
-        .signWith(SignatureAlgorithm.HS256, secret).compact();
+  private String createToken(Map<String, Object> claims, String subject, int tokenType) {
+    switch (tokenType){
+      case ACCESS_TOKEN:
+        return Jwts.builder().setClaims(claims).setSubject(subject)
+            .setIssuedAt(new Date(System.currentTimeMillis()))
+            .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_SECOND))
+            .signWith(SignatureAlgorithm.HS256, secret).compact();
+      case REFRESH_TOKEN:
+        return Jwts.builder().setClaims(claims).setSubject(subject)
+            .setIssuedAt(new Date(System.currentTimeMillis()))
+            .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_SECOND))
+            .signWith(SignatureAlgorithm.HS256, secret).compact();
+      default:
+        return null;
+    }
+
   }
 
   public Boolean validateToken(String token, UserDetails userDetails) {
