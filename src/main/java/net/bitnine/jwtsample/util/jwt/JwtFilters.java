@@ -84,10 +84,13 @@ public class JwtFilters extends OncePerRequestFilter {
 
         httpServletResponse.addCookie(hp);
         httpServletResponse.addCookie(sg);
+
         log.info("CREATE NEW ACCESS TOKEN");
       }else{
         log.info("NO REFRESH TOKEN");
       }
+    }finally {
+      httpServletResponse.setHeader("Access-Control-Allow-Credentials","true");
     }
 
     /**
